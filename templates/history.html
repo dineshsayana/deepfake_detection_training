@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}History · Deepfake Detector{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-semibold mb-1">Scan History</h3>
+        <p class="text-muted mb-0">All your previous deepfake scans.</p>
+    </div>
+    {% if rows %}
+    <form method="POST" action="{{ url_for('clear_history') }}" onsubmit="return confirm('Clear all history? This cannot be undone.');">
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-trash3"></i> Clear History
+        </button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="card p-3">
+    {% if rows %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>File</th>
+                    <th>Preview</th>
+                    <th>Result</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td class="text-capitalize">
+                        {% if row.media_type == 'image' %}<i class="bi bi-image"></i>
+                        {% elif row.media_type == 'audio' %}<i class="bi bi-mic"></i>
+                        {% else %}<i class="bi bi-camera-video"></i>{% endif %}
+                        {{ row.media_type }}
+                    </td>
+                    <td>{{ row.original_filename or '—' }}</td>
+                    <td>
+                        {% if row.media_type == 'image' and row.output_path %}
+                            <img src="{{ url_for('static', filename=row.output_path) }}" class="thumb-preview">
+                        {% elif row.media_type == 'video' and row.output_path %}
+                            <video src="{{ url_for('static', filename=row.output_path) }}" class="thumb-preview" muted></video>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.result == 'REAL' %}
+                            <span class="badge rounded-pill text-bg-success">🟢 REAL</span>
+                        {% elif row.result == 'FAKE' %}
+                            <span class="badge rounded-pill text-bg-danger">🔴 FAKE</span>
+                        {% else %}
+                            <span class="badge rounded-pill text-bg-warning">⚠️ ERROR</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ '%.2f'|format(row.confidence) }}%</td>
+                    <td class="text-muted small">{{ row.created_at.split('.')[0].replace('T', ' ') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted mb-0 text-center py-4">No scans yet. Head over to the <a href="{{ url_for('dashboard') }}">dashboard</a> to run one.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

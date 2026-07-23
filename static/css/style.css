@@ -1,0 +1,109 @@
+:root {
+    --brand: #4a6cf7;
+    --brand-soft: #eef1ff;
+    --bg: #f7f8fc;
+    --card-border: #e7e9f3;
+    --text-soft: #6b7280;
+}
+
+body {
+    background-color: var(--bg);
+    color: #1f2330;
+}
+
+.app-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--card-border);
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+}
+
+.navbar-brand i {
+    color: var(--brand);
+}
+
+.nav-link.active {
+    color: var(--brand) !important;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--brand);
+    border-color: var(--brand);
+}
+
+.btn-primary:hover {
+    background-color: #3a58d8;
+    border-color: #3a58d8;
+}
+
+.card {
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+.auth-wrapper {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+.result-badge {
+    font-size: 1.05rem;
+    padding: 0.5em 1em;
+    border-radius: 999px;
+}
+
+.result-real {
+    background-color: #e6f7ee;
+    color: #12805c;
+}
+
+.result-fake {
+    background-color: #fdeaea;
+    color: #c92a2a;
+}
+
+.result-error {
+    background-color: #fff3e0;
+    color: #b06a00;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 2px solid var(--brand);
+    font-weight: 600;
+    color: var(--brand);
+}
+
+.upload-drop {
+    border: 1.5px dashed var(--card-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background-color: var(--brand-soft);
+}
+
+.table > :not(caption) > * > * {
+    vertical-align: middle;
+}
+
+.thumb-preview {
+    max-height: 70px;
+    border-radius: 8px;
+}
+
+.explanation-box {
+    background-color: #fafbfe;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 1rem;
+    white-space: pre-line;
+    color: var(--text-soft);
+    font-size: 0.92rem;
+}

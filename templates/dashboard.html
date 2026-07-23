@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · Deepfake Detector{% endblock %}
+{% block content %}
+
+<div class="mb-4">
+    <h3 class="fw-semibold mb-1">Scan Media</h3>
+    <p class="text-muted">Upload an image, audio clip, or video to check for signs of deepfake manipulation.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card p-3">
+            <ul class="nav nav-tabs" id="mediaTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab=='image' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#imageTab" type="button">
+                        <i class="bi bi-image"></i> Image
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab=='audio' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#audioTab" type="button">
+                        <i class="bi bi-mic"></i> Audio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab=='video' %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#videoTab" type="button">
+                        <i class="bi bi-camera-video"></i> Video
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content pt-4">
+                <div class="tab-pane fade {% if active_tab=='image' %}show active{% endif %}" id="imageTab">
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="media_type" value="image">
+                        <div class="upload-drop mb-3">
+                            <i class="bi bi-cloud-upload fs-2 text-primary"></i>
+                            <p class="mb-2 mt-2">PNG, JPG, JPEG, or BMP</p>
+                            <input type="file" name="media_file" accept=".png,.jpg,.jpeg,.bmp" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Scan Image</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade {% if active_tab=='audio' %}show active{% endif %}" id="audioTab">
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="media_type" value="audio">
+                        <div class="upload-drop mb-3">
+                            <i class="bi bi-cloud-upload fs-2 text-primary"></i>
+                            <p class="mb-2 mt-2">WAV, MP3, FLAC, OGG, or M4A</p>
+                            <input type="file" name="media_file" accept=".wav,.mp3,.flac,.ogg,.m4a" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Scan Audio</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade {% if active_tab=='video' %}show active{% endif %}" id="videoTab">
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="media_type" value="video">
+                        <div class="upload-drop mb-3">
+                            <i class="bi bi-cloud-upload fs-2 text-primary"></i>
+                            <p class="mb-2 mt-2">MP4, AVI, MOV, MKV, or WEBM</p>
+                            <input type="file" name="media_file" accept=".mp4,.avi,.mov,.mkv,.webm" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Scan Video</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card p-3 h-100">
+            <h5 class="fw-semibold mb-3"><i class="bi bi-clipboard-data"></i> Analysis Result</h5>
+
+            {% if result %}
+                {% set badge_class = 'result-real' if result.label == 'REAL' else ('result-fake' if result.label == 'FAKE' else 'result-error') %}
+                <span class="result-badge {{ badge_class }} d-inline-block mb-3">
+                    {% if result.label == 'REAL' %}🟢{% elif result.label == 'FAKE' %}🔴{% else %}⚠️{% endif %}
+                    {{ result.label }}
+                    {% if result.confidence %} ({{ '%.2f'|format(result.confidence) }}% confidence){% endif %}
+                </span>
+
+                {% if result.type == 'image' and result.output %}
+                    <img src="{{ url_for('static', filename=result.output) }}" class="img-fluid rounded mb-3" alt="Analysis visualization">
+                {% elif result.type == 'video' and result.output %}
+                    <video src="{{ url_for('static', filename=result.output) }}" class="w-100 rounded mb-3" controls></video>
+                {% endif %}
+
+                <div class="explanation-box">{{ result.explanation }}</div>
+            {% else %}
+                <p class="text-muted">Upload a file on the left to see the analysis result here.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
